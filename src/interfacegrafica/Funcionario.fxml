@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+
+<AnchorPane prefHeight="500.0" prefWidth="400.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="interfacegrafica.FuncionarioController">
+   <children>
+      <Label layoutX="170.0" layoutY="17.0" text="Funcionário" textAlignment="CENTER" textFill="#031480" />
+      <Button fx:id="btnIncluir" layoutX="33.0" layoutY="52.0" mnemonicParsing="false" onAction="#onBtnIncluirClick" onKeyReleased="#onKeyRelesead" prefHeight="25.0" prefWidth="75.0" text="Incluir" textFill="#031480" />
+      <Button fx:id="btnConsultar" layoutX="121.0" layoutY="52.0" mnemonicParsing="false" onAction="#onBtnConsultarClick" onKeyReleased="#onKeyRelesead" prefHeight="25.0" prefWidth="75.0" text="Consultar" textFill="#031480" />
+      <Button fx:id="btnExcluir" disable="true" layoutX="209.0" layoutY="52.0" mnemonicParsing="false" onAction="#onBtnExcluirClick" onKeyReleased="#onKeyRelesead" prefHeight="25.0" prefWidth="75.0" text="Excluir" textFill="#031480" />
+      <Button fx:id="btnAlterar" disable="true" layoutX="297.0" layoutY="52.0" mnemonicParsing="false" onAction="#onBtnAlterarClick" onKeyReleased="#onKeyRelesead" prefHeight="25.0" prefWidth="75.0" text="Alterar" textFill="#031480" />
+      <Label layoutX="33.0" layoutY="103.0" prefHeight="17.0" prefWidth="75.0" text="CPF" textFill="#031480" />
+      <TextField fx:id="txtCpfFunc" disable="true" layoutX="115.0" layoutY="99.0" onKeyReleased="#onKeyRelesead" prefHeight="25.0" prefWidth="257.0" promptText="CPF" />
+      <Label layoutX="33.0" layoutY="141.0" prefHeight="17.0" prefWidth="75.0" text="Nome" textFill="#031480" />
+      <TextField fx:id="txtNomeFunc" disable="true" layoutX="115.0" layoutY="137.0" onKeyReleased="#onKeyRelesead" prefHeight="25.0" prefWidth="257.0" promptText="Nome Completo" />
+      <Label layoutX="33.0" layoutY="179.0" prefHeight="17.0" prefWidth="75.0" text="Nascimento" textFill="#031480" />
+      <TextField fx:id="txtNascimentoFunc" disable="true" layoutX="115.0" layoutY="175.0" onKeyReleased="#onKeyRelesead" prefHeight="25.0" prefWidth="257.0" promptText="Data de nascimento" />
+      <Label layoutX="33.0" layoutY="217.0" prefHeight="17.0" prefWidth="75.0" text="Endereço" textFill="#031480" />
+      <TextField fx:id="txtEnderecoFunc" disable="true" layoutX="115.0" layoutY="213.0" onKeyReleased="#onKeyRelesead" prefHeight="25.0" prefWidth="257.0" promptText="Endereço" />
+      <Label layoutX="33.0" layoutY="255.0" prefHeight="17.0" prefWidth="75.0" text="Senha" textFill="#031480" />
+      <TextField fx:id="txtSenhaFunc" disable="true" layoutX="115.0" layoutY="251.0" onKeyReleased="#onKeyRelesead" prefHeight="25.0" prefWidth="257.0" promptText="Senha" />
+      <Label layoutX="33.0" layoutY="293.0" prefHeight="17.0" prefWidth="75.0" text="Telefone" textFill="#031480" />
+      <TextField fx:id="txtFoneFunc" disable="true" layoutX="115.0" layoutY="289.0" onKeyReleased="#onKeyRelesead" prefHeight="25.0" prefWidth="257.0" promptText="Telefone" />
+      <Label layoutX="33.0" layoutY="331.0" prefHeight="17.0" prefWidth="75.0" text="E-mail" textFill="#031480" />
+      <TextField fx:id="txtEmailFunc" disable="true" layoutX="115.0" layoutY="327.0" onKeyReleased="#onKeyRelesead" prefHeight="25.0" prefWidth="257.0" promptText="E-mail" />
+      <Label layoutX="33.0" layoutY="369.0" prefHeight="17.0" prefWidth="75.0" text="Função" textFill="#031480" />
+      <ComboBox fx:id="cboFuncaoFunc" layoutX="115.0" layoutY="365.0" prefHeight="25.0" prefWidth="257.0" promptText="Selecione o setor" />
+      <Button fx:id="btnConfirmar" disable="true" layoutX="33.0" layoutY="410.0" mnemonicParsing="false" onAction="#onBtnConfirmarClick" prefHeight="25.0" prefWidth="166.0" text="Confirmar" textFill="#031480" />
+      <Button fx:id="btnCancelar" disable="true" layoutX="206.0" layoutY="410.0" mnemonicParsing="false" onAction="#onBtnCancelarClick" prefHeight="25.0" prefWidth="166.0" text="Cancelar" textFill="#800404" />
+      <Label fx:id="lblMensagem" layoutX="33.0" layoutY="453.0" prefHeight="17.0" prefWidth="166.0" text="Mensagem" textFill="#083ccd" />
+      <Button fx:id="btnVoltar" layoutX="206.0" layoutY="449.0" mnemonicParsing="false" onAction="#onBtnVoltar" prefHeight="25.0" prefWidth="166.0" text="Voltar" textFill="#800404" />
+   </children>
+</AnchorPane>

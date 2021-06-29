@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.effect.DropShadow?>
+<?import javafx.scene.effect.InnerShadow?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.paint.Color?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane prefHeight="500.0" prefWidth="400.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="interfacegrafica.IndexController">
+   <children>
+      <Label contentDisplay="CENTER" layoutX="120.0" layoutY="24.0" text="Cacupe Klinik   " textFill="#571802">
+         <font>
+            <Font size="24.0" />
+         </font>
+         <effect>
+            <DropShadow />
+         </effect>
+      </Label>
+      <Button fx:id="btnFuncionario" layoutX="58.0" layoutY="109.0" mnemonicParsing="false" onAction="#onBtnFuncionarioClick" prefHeight="53.0" prefWidth="284.0" text="Funcionário" textFill="#0b41b5">
+         <font>
+            <Font size="24.0" />
+         </font>
+         <effect>
+            <InnerShadow>
+               <color>
+                  <Color red="0.7490196228027344" green="0.8901960849761963" blue="0.9725490212440491" />
+               </color>
+            </InnerShadow>
+         </effect>
+      </Button>
+      <Button fx:id="btnPaciente" layoutX="58.0" layoutY="215.0" mnemonicParsing="false" onAction="#onBtnPacienteClick" prefHeight="53.0" prefWidth="284.0" text="Paciente" textFill="#0b41b5">
+         <font>
+            <Font size="24.0" />
+         </font>
+         <effect>
+            <InnerShadow>
+               <color>
+                  <Color red="0.7490196228027344" green="0.8901960849761963" blue="0.9725490212440491" />
+               </color>
+            </InnerShadow>
+         </effect>
+      </Button>
+      <Button fx:id="btnMedico" layoutX="59.0" layoutY="321.0" mnemonicParsing="false" onAction="#onBtnMedicoClick" prefHeight="53.0" prefWidth="284.0" text="Médico" textFill="#0b41b5">
+         <font>
+            <Font size="24.0" />
+         </font>
+         <effect>
+            <InnerShadow>
+               <color>
+                  <Color red="0.7490196228027344" green="0.8901960849761963" blue="0.9725490212440491" />
+               </color>
+            </InnerShadow>
+         </effect>
+      </Button>
+      <Label fx:id="lblMensagem" layoutX="30.0" layoutY="436.0" prefHeight="17.0" prefWidth="344.0" text="Mensagem" textFill="#083ccd" />
+   </children>
+</AnchorPane>
