@@ -5,6 +5,8 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+import javax.management.JMRuntimeException;
+
 import com.mysql.jdbc.PreparedStatement;
 
 import javafx.fxml.FXML;
@@ -53,7 +55,6 @@ public class MedicoController {
 
 	public static Connection abreBanco() {
 		final String BANCO = "jdbc:mysql://localhost:3306/cacupe";
-
 		try {
 			return DriverManager.getConnection(BANCO, "root", "");
 		} catch (SQLException e) {
@@ -63,7 +64,6 @@ public class MedicoController {
 
 	private int crmMed;
 	private String nomeMed;
-	private String enderecoMed;
 	private String senhaMed;
 	private String emailMed;
 	private String foneMed;
@@ -71,7 +71,6 @@ public class MedicoController {
 	private String ouvido;
 	private String garganta;
 	private String nariz;
-
 	private String evento = "";
 
 	public void onBtnIncluirClick() {
@@ -91,7 +90,46 @@ public class MedicoController {
 	}
 
 	public void incluir() {
-		System.out.println("Chamou o método INCLUIR");
+		Connection banco = abreBanco();
+		PreparedStatement ps;
+		ResultSet rs = null;
+		String sql;
+		boolean add = false;
+
+		crmMed = Integer.parseInt(txtCrmMed.getText());
+		nomeMed = txtNomeMed.getText();
+		senhaMed = txtSenhaMed.getText();
+		emailMed = txtEmailMed.getText();
+		foneMed = txtFoneMed.getText();
+		if (rdoGargMed.isSelected()) {
+			espeMed = "Garganta";
+		} else if (rdoNariMed.isSelected()) {
+			espeMed = "Nariz";
+		} else {
+			espeMed = "Ouvido";
+		}
+
+		try {
+			sql = "Insert into medico (crmMed, nomeMed, senhaMed, emailMed, foneMed, espeMed) values (?,?,?,?,?,?)";
+			ps = (PreparedStatement) banco.prepareStatement(sql);
+			ps.setInt(1, crmMed);
+			ps.setString(2, nomeMed);
+			ps.setString(3, senhaMed);
+			ps.setString(4, emailMed);
+			ps.setString(5, foneMed);
+			ps.setString(6, espeMed);
+
+			int rsAltera = ps.executeUpdate();
+			add = true;
+
+		} catch (SQLException e) {
+			throw new RuntimeException(e);
+		}
+		if (!add) {
+			lblMensagem.setText(crmMed + " Não incluiu.");
+		} else {
+			lblMensagem.setText(crmMed + " Incluiu novo funcionario.");
+		}
 	}
 
 	public void onBtnConsultarClick() {
@@ -107,13 +145,10 @@ public class MedicoController {
 		btnConsultar.setDisable(true);
 		btnExcluir.setDisable(true);
 		btnAlterar.setDisable(true);
-
 		btnCancelar.setDisable(false);
 	}
 
 	public void consultar() {
-		System.out.println("Chamou o método CONSULTAR");
-
 		Connection banco = abreBanco();
 		PreparedStatement ps;
 		ResultSet rs = null;
@@ -121,7 +156,6 @@ public class MedicoController {
 		boolean achou = false;
 
 		crmMed = Integer.parseInt(txtCrmMed.getText());
-
 		try {
 			sql = "Select * from medico where crmMed=" + crmMed;
 			ps = (PreparedStatement) banco.prepareStatement(sql);
@@ -142,27 +176,50 @@ public class MedicoController {
 				} else {
 					rdoNariMed.setSelected(true);
 				}
-
-				lblMensagem.setText("");
-
 				achou = true;
 			}
-
 		} catch (SQLException e) {
 			throw new RuntimeException(e);
 		}
-		if (!achou) {
-			lblMensagem.setText("Código não encontrado no banco de");
+		if (achou != false) {
+			lblMensagem.setText("Consulta.");
+
+		} else {
+			lblMensagem.setText("CPF não encontrado.");
+			onBtnCancelarClick();
 		}
 	}
 
 	public void onBtnExcluirClick() {
-		excluir();
+		btnConfirmar.setDisable(false);
+		lblMensagem.setText("Confirme para escluir.");
+		evento = "excluir";
+
 	}
 
 	public void excluir() {
-		System.out.println("Chamou o método EXCLUIR");
-		onBtnCancelarClick();
+		Connection banco = abreBanco();
+		PreparedStatement ps;
+		ResultSet rs = null;
+		String sql;
+		boolean exclui = false;
+
+		crmMed = Integer.parseInt(txtCrmMed.getText());
+		nomeMed = txtNomeMed.getText();
+		try {
+			sql = "Delete from medico where crmMed= " + crmMed;
+			ps = (PreparedStatement) banco.prepareStatement(sql);
+			int rsAltera = ps.executeUpdate();
+			
+			exclui = true;
+
+		} catch (Exception e) {
+			throw new JMRuntimeException();
+		}
+		if (exclui != false) {
+			lblMensagem.setText(nomeMed + " foi excluido(a).");
+		} else
+			lblMensagem.setText(nomeMed + " não foi excluido(a).");
 	}
 
 	public void onBtnAlterarClick() {
@@ -173,31 +230,85 @@ public class MedicoController {
 		txtEmailMed.setDisable(false);
 		txtFoneMed.setDisable(false);
 		btnConfirmar.setDisable(false);
-
 	}
 
 	public void alterar() {
-		System.out.println("Chamou o método ALTERAR");
+		Connection banco = abreBanco();
+		PreparedStatement ps;
+		ResultSet rs = null;
+		String sql;
+		boolean modificou = false;
+
+		crmMed = Integer.parseInt(txtCrmMed.getText());
+		nomeMed = txtNomeMed.getText();
+		senhaMed = txtSenhaMed.getText();
+		emailMed = txtEmailMed.getText();
+		foneMed = txtFoneMed.getText();
+
+		if (rdoGargMed.isSelected()) {
+			espeMed = "Garganta";
+		} else if (rdoNariMed.isSelected()) {
+			espeMed = "Nariz";
+		} else {
+			espeMed = "Ouvido";
+		}
+
+		try {
+			sql = "Update medico set nomeMed = ?, senhaMed = ?, emailMed = ?, foneMed = ?, espeMed = ?"
+					+ "where crmMed=?";
+
+			ps = (PreparedStatement) banco.prepareStatement(sql);
+			ps.setString(1, nomeMed);
+			ps.setString(2, senhaMed);
+			ps.setString(3, emailMed);
+			ps.setString(4, foneMed);
+			ps.setString(5, espeMed);
+			ps.setInt(6, crmMed);
+			ps.executeUpdate();
+			ps.close();
+			banco.close();
+
+			modificou = true;
+			
+		} catch (Exception e) {
+			throw new RuntimeException();
+		}
+
+		if (modificou != false) {
+			lblMensagem.setText(nomeMed + " foi alterado(a).");
+		} else {
+			lblMensagem.setText(nomeMed + " Não foi alterado(a).");
+		}
 	}
 
 	public void onBtnConfirmarClick() {
 		if (evento.equalsIgnoreCase("incluir")) {
-			incluir();
-			onBtnCancelarClick();
+			if (!txtCrmMed.getText().matches("[0-9]*")) {
+				lblMensagem.setText("Digite um CRM valido.");
+
+			} else {
+				incluir();
+				onBtnCancelarClick();
+			}
 
 		} else if (evento.equalsIgnoreCase("consultar")) {
 			if (!txtCrmMed.getText().matches("[0-9]*")) {
-				System.out.println("Digite um CRM valido.");
+				lblMensagem.setText("Digite um CRM valido.");
+
 			} else {
 				txtCrmMed.setDisable(true);
 				btnExcluir.setDisable(false);
 				btnAlterar.setDisable(false);
 				btnConfirmar.setDisable(true);
-
 				consultar();
 			}
+
 		} else if (evento.equalsIgnoreCase("alterar")) {
 			alterar();
+			onBtnCancelarClick();
+
+		} else {
+			excluir();
 			onBtnCancelarClick();
 		}
 	}
@@ -222,11 +333,9 @@ public class MedicoController {
 
 		btnConfirmar.setDisable(true);
 		btnCancelar.setDisable(true);
-
 	}
-	
+
 	public void onBtnVoltar() throws Exception {
-		System.out.println("Voltando para indexPage");
 		Parent p = FXMLLoader.load(getClass().getResource("/interfacegrafica/Index.fxml"));
 		Stage window = (Stage) btnVoltar.getScene().getWindow();
 		window.setScene(new Scene(p));
@@ -236,14 +345,14 @@ public class MedicoController {
 		boolean confirmar;
 
 		if (evento.equalsIgnoreCase("incluir")) {
-			confirmar = txtCrmMed.getText().isEmpty() | txtNomeMed.getText().isEmpty()
-					|  txtSenhaMed.getText().isEmpty()
+			confirmar = txtCrmMed.getText().isEmpty() | txtNomeMed.getText().isEmpty() | txtSenhaMed.getText().isEmpty()
 					| txtEmailMed.getText().isEmpty() | txtFoneMed.getText().isEmpty();
 			btnConfirmar.setDisable(confirmar);
+
 		} else if (evento.equalsIgnoreCase("consultar")) {
 			confirmar = txtCrmMed.getText().isEmpty();
 			btnConfirmar.setDisable(confirmar);
-		} else if (evento.equalsIgnoreCase("alterar")) {
+
 		}
 	}
 }

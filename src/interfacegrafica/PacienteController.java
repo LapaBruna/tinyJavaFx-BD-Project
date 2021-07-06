@@ -5,6 +5,8 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+import javax.management.JMRuntimeException;
+
 import com.mysql.jdbc.PreparedStatement;
 
 import javafx.fxml.FXML;
@@ -48,7 +50,6 @@ public class PacienteController {
 
 	public static Connection abreBanco() {
 		final String BANCO = "jdbc:mysql://localhost:3306/cacupe";
-
 		try {
 			return DriverManager.getConnection(BANCO, "root", "");
 		} catch (SQLException e) {
@@ -82,7 +83,40 @@ public class PacienteController {
 	}
 
 	public void incluir() {
-		System.out.println("Chamou o método INCLUIR");
+		Connection banco = abreBanco();
+		PreparedStatement ps;
+		ResultSet rs = null;
+		String sql;
+		boolean add = false;
+
+		cpfPac = Integer.parseInt(txtCpfPac.getText());
+		nomePac = txtNomePac.getText();
+		nasciPac = txtNascimentoPac.getText();
+		enderecoPac = txtEnderecoPac.getText();
+		emailPac = txtEmailPac.getText();
+		fonePac = txtFonePac.getText();
+
+		try {
+			sql = "Insert into paciente (cpfPac, nomePac, nasciPac, enderecoPac, emailPac, fonePac) values (?,?,?,?,?,?)";
+			ps = (PreparedStatement) banco.prepareStatement(sql);
+			ps.setInt(1, cpfPac);
+			ps.setString(2, nomePac);
+			ps.setString(3, nasciPac);
+			ps.setString(4, enderecoPac);
+			ps.setString(5, emailPac);
+			ps.setString(6, fonePac);
+
+			int rsAltera = ps.executeUpdate();
+			add = true;
+
+		} catch (SQLException e) {
+			throw new RuntimeException(e);
+		}
+		if (!add) {
+			lblMensagem.setText(cpfPac + " Não incluiu.");
+		} else {
+			lblMensagem.setText(cpfPac + " Incluiu novo funcionario.");
+		}
 	}
 
 	public void onBtnConsultarClick() {
@@ -104,8 +138,6 @@ public class PacienteController {
 	}
 
 	public void consultar() {
-		System.out.println("Chamou o método CONSULTAR");
-
 		Connection banco = abreBanco();
 		PreparedStatement ps;
 		ResultSet rs = null;
@@ -113,7 +145,6 @@ public class PacienteController {
 		boolean achou = false;
 
 		cpfPac = Integer.parseInt(txtCpfPac.getText());
-
 		try {
 			sql = "Select * from paciente where cpfPac=" + cpfPac;
 			ps = (PreparedStatement) banco.prepareStatement(sql);
@@ -126,25 +157,52 @@ public class PacienteController {
 				txtEnderecoPac.setText(rs.getString("enderecoPac"));
 				txtEmailPac.setText(rs.getString("emailPac"));
 				txtFonePac.setText(rs.getString("fonePac"));
-				lblMensagem.setText("");
+
 				achou = true;
 			}
 
 		} catch (SQLException e) {
 			throw new RuntimeException(e);
 		}
-		if (!achou) {
-			lblMensagem.setText("Código não encontrado no banco de");
+		if (achou != false) {
+			lblMensagem.setText("Consulta.");
+
+		} else {
+			lblMensagem.setText("CPF não encontrado.");
+			onBtnCancelarClick();
 		}
 	}
 
 	public void onBtnExcluirClick() {
-		excluir();
+		btnConfirmar.setDisable(false);
+		lblMensagem.setText("Confirme para escluir.");
+		evento = "excluir";
 	}
 
 	public void excluir() {
-		System.out.println("Chamou o método EXCLUIR");
-		onBtnCancelarClick();
+		Connection banco = abreBanco();
+		PreparedStatement ps;
+		ResultSet rs = null;
+		String sql;
+		boolean exclui = false;
+
+		cpfPac = Integer.parseInt(txtCpfPac.getText());
+		nomePac = txtNomePac.getText();
+		try {
+			sql = "Delete from paciente where cpfPac= " + cpfPac;
+			ps = (PreparedStatement) banco.prepareStatement(sql);
+			int rsAltera = ps.executeUpdate();
+			
+			exclui = true;
+
+		} catch (Exception e) {
+			throw new JMRuntimeException();
+		}
+		if (exclui != false) {
+			lblMensagem.setText(nomePac + " foi excluido(a).");
+		} else {
+			lblMensagem.setText(nomePac + " não foi excluido(a).");
+		}
 	}
 
 	public void onBtnAlterarClick() {
@@ -156,21 +214,63 @@ public class PacienteController {
 		txtEmailPac.setDisable(false);
 		txtFonePac.setDisable(false);
 		btnConfirmar.setDisable(false);
-
 	}
 
 	public void alterar() {
-		System.out.println("Chamou o método ALTERAR");
+		Connection banco = abreBanco();
+		PreparedStatement ps;
+		ResultSet rs = null;
+		String sql;
+		boolean modificou = false;
+
+		cpfPac = Integer.parseInt(txtCpfPac.getText());
+		nomePac = txtNomePac.getText();
+		nasciPac = txtNascimentoPac.getText();
+		enderecoPac = txtEnderecoPac.getText();
+		emailPac = txtEmailPac.getText();
+		fonePac = txtFonePac.getText();
+
+		try {
+			sql = "Update paciente set nomePac = ?, nasciPac = ?, enderecoPac = ?, emailPac = ?, fonePac = ?"
+					+ "where cpfPac=?";
+
+			ps = (PreparedStatement) banco.prepareStatement(sql);
+			ps.setString(1, nomePac);
+			ps.setString(2, nasciPac);
+			ps.setString(3, enderecoPac);
+			ps.setString(4, emailPac);
+			ps.setString(5, fonePac);
+			ps.setInt(6, cpfPac);
+			ps.executeUpdate();
+			ps.close();
+			banco.close();
+			
+			modificou = true;
+
+		} catch (Exception e) {
+			throw new RuntimeException();
+		}
+		if (modificou != false) {
+			lblMensagem.setText(nomePac + " foi alterado(a).");
+		} else {
+			lblMensagem.setText(nomePac + " Não foi alterado(a).");
+		}
 	}
 
 	public void onBtnConfirmarClick() {
 		if (evento.equalsIgnoreCase("incluir")) {
-			incluir();
-			onBtnCancelarClick();
+			if (!txtCpfPac.getText().matches("[0-9]*")) {
+				lblMensagem.setText("Digite um CPF valido.");
+
+			} else {
+				incluir();
+				onBtnCancelarClick();
+			}
 
 		} else if (evento.equalsIgnoreCase("consultar")) {
 			if (!txtCpfPac.getText().matches("[0-9]*")) {
-				System.out.println("Digite um CPF valido.");
+				lblMensagem.setText("Digite um CPF valido.");
+
 			} else {
 				txtCpfPac.setDisable(true);
 				btnExcluir.setDisable(false);
@@ -179,8 +279,13 @@ public class PacienteController {
 
 				consultar();
 			}
+
 		} else if (evento.equalsIgnoreCase("alterar")) {
 			alterar();
+			onBtnCancelarClick();
+
+		} else {
+			excluir();
 			onBtnCancelarClick();
 		}
 	}
@@ -207,11 +312,9 @@ public class PacienteController {
 
 		btnConfirmar.setDisable(true);
 		btnCancelar.setDisable(true);
-
 	}
-	
+
 	public void onBtnVoltar() throws Exception {
-		System.out.println("Voltando para indexPage");
 		Parent p = FXMLLoader.load(getClass().getResource("/interfacegrafica/Index.fxml"));
 		Stage window = (Stage) btnVoltar.getScene().getWindow();
 		window.setScene(new Scene(p));
@@ -225,10 +328,10 @@ public class PacienteController {
 					| txtNascimentoPac.getText().isEmpty() | txtEnderecoPac.getText().isEmpty()
 					| txtEmailPac.getText().isEmpty() | txtFonePac.getText().isEmpty();
 			btnConfirmar.setDisable(confirmar);
+
 		} else if (evento.equalsIgnoreCase("consultar")) {
 			confirmar = txtCpfPac.getText().isEmpty();
 			btnConfirmar.setDisable(confirmar);
-		} else if (evento.equalsIgnoreCase("alterar")) {
 		}
 	}
 }

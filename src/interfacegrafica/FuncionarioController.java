@@ -7,6 +7,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ResourceBundle;
 
+import javax.management.JMRuntimeException;
+
 import com.mysql.jdbc.PreparedStatement;
 
 import javafx.fxml.FXML;
@@ -56,7 +58,6 @@ public class FuncionarioController implements Initializable {
 
 	public static Connection abreBanco() {
 		final String BANCO = "jdbc:mysql://localhost:3306/cacupe";
-
 		try {
 			return DriverManager.getConnection(BANCO, "root", "");
 		} catch (SQLException e) {
@@ -93,27 +94,43 @@ public class FuncionarioController implements Initializable {
 	}
 
 	public void incluir() {
-		System.out.println("Chamou o método INCLUIR");
-
 		Connection banco = abreBanco();
 		PreparedStatement ps;
 		ResultSet rs = null;
 		String sql;
-		boolean achou = false;
+		boolean add = false;
+
+		cpfFunc = Integer.parseInt(txtCpfFunc.getText());
+		nomeFunc = txtNomeFunc.getText();
+		nasciFunc = txtNascimentoFunc.getText();
+		enderecoFunc = txtEnderecoFunc.getText();
+		senhaFunc = txtSenhaFunc.getText();
+		emailFunc = txtEmailFunc.getText();
+		foneFunc = txtFoneFunc.getText();
+		funcaoFunc = cboFuncaoFunc.getPromptText();
 
 		try {
-			sql = "Select * from funcionario where cpfFunc=" + cpfFunc;
+			sql = "Insert into funcionario (cpfFunc, nomeFunc, nasciFunc, enderecoFunc, senhaFunc, emailFunc, foneFunc, funcaoFunc) values (?,?,?,?,?,?,?,?)";
 			ps = (PreparedStatement) banco.prepareStatement(sql);
-			rs = ps.executeQuery();
-			while (rs.next()) {
+			ps.setInt(1, cpfFunc);
+			ps.setString(2, nomeFunc);
+			ps.setString(3, nasciFunc);
+			ps.setString(4, enderecoFunc);
+			ps.setString(5, senhaFunc);
+			ps.setString(6, emailFunc);
+			ps.setString(7, foneFunc);
+			ps.setString(8, funcaoFunc);
 
-			}
+			int rsAltera = ps.executeUpdate();
+			add = true;
+
 		} catch (SQLException e) {
 			throw new RuntimeException(e);
-
 		}
-		if (!achou) {
-			lblMensagem.setText("Código não encontrado no banco de");
+		if (!add) {
+			lblMensagem.setText(cpfFunc + " Não incluiu.");
+		} else {
+			lblMensagem.setText(cpfFunc + " Incluiu novo funcionario.");
 		}
 	}
 
@@ -132,13 +149,10 @@ public class FuncionarioController implements Initializable {
 		btnConsultar.setDisable(true);
 		btnExcluir.setDisable(true);
 		btnAlterar.setDisable(true);
-
 		btnCancelar.setDisable(false);
 	}
 
 	public void consultar() {
-		System.out.println("Chamou o método CONSULTAR");
-
 		Connection banco = abreBanco();
 		PreparedStatement ps;
 		ResultSet rs = null;
@@ -146,7 +160,6 @@ public class FuncionarioController implements Initializable {
 		boolean achou = false;
 
 		cpfFunc = Integer.parseInt(txtCpfFunc.getText());
-
 		try {
 			sql = "Select * from funcionario where cpfFunc=" + cpfFunc;
 			ps = (PreparedStatement) banco.prepareStatement(sql);
@@ -162,26 +175,48 @@ public class FuncionarioController implements Initializable {
 				txtFoneFunc.setText(rs.getString("foneFunc"));
 				cboFuncaoFunc.setValue(rs.getString("funcaoFunc"));
 
-				lblMensagem.setText("");
-
 				achou = true;
 			}
-
 		} catch (SQLException e) {
 			throw new RuntimeException(e);
 		}
-		if (!achou) {
-			lblMensagem.setText("Código não encontrado no banco de");
+		if (achou != false) {
+			lblMensagem.setText("Consulta.");
+
+		} else {
+			lblMensagem.setText("CPF não encontrado.");
+			onBtnCancelarClick();
 		}
 	}
 
 	public void onBtnExcluirClick() {
-		excluir();
+		btnConfirmar.setDisable(false);
+		lblMensagem.setText("Confirme para escluir.");
+		evento = "excluir";
 	}
 
 	public void excluir() {
-		System.out.println("Chamou o método EXCLUIR");
-		onBtnCancelarClick();
+		Connection banco = abreBanco();
+		PreparedStatement ps;
+		ResultSet rs = null;
+		String sql;
+		boolean exclui = false;
+
+		cpfFunc = Integer.parseInt(txtCpfFunc.getText());
+		nomeFunc = txtNomeFunc.getText();
+		try {
+			sql = "Delete from funcionario where cpfFunc= " + cpfFunc;
+			ps = (PreparedStatement) banco.prepareStatement(sql);
+			int rsAltera = ps.executeUpdate();
+
+		} catch (Exception e) {
+			throw new JMRuntimeException();
+		}
+		if (exclui != false) {
+			lblMensagem.setText(nomeFunc + " foi excluido(a).");
+		} else {
+			lblMensagem.setText(nomeFunc + " não foi excluido(a).");
+		}
 	}
 
 	public void onBtnAlterarClick() {
@@ -194,33 +229,81 @@ public class FuncionarioController implements Initializable {
 		txtEmailFunc.setDisable(false);
 		txtFoneFunc.setDisable(false);
 		btnConfirmar.setDisable(false);
-
+		txtCpfFunc.setDisable(true);
 	}
 
 	public void alterar() {
-		System.out.println("Chamou o método ALTERAR");
+		Connection banco = abreBanco();
+		PreparedStatement ps;
+		ResultSet rs = null;
+		String sql;
+		boolean modificou = false;
+
+		cpfFunc = Integer.parseInt(txtCpfFunc.getText());
+		nomeFunc = txtNomeFunc.getText();
+		nasciFunc = txtNascimentoFunc.getText();
+		enderecoFunc = txtEnderecoFunc.getText();
+		senhaFunc = txtSenhaFunc.getText();
+		emailFunc = txtEmailFunc.getText();
+		foneFunc = txtFoneFunc.getText();
+		funcaoFunc = cboFuncaoFunc.getPromptText();
+
+		try {
+			sql = "Update funcionario set nomeFunc = ?, nasciFunc = ?, enderecoFunc = ?, senhaFunc = ?, emailFunc = ?, foneFunc = ?, funcaoFunc = ? "
+					+ "where cpfFunc=?";
+
+			ps = (PreparedStatement) banco.prepareStatement(sql);
+			ps.setString(1, nomeFunc);
+			ps.setString(2, nasciFunc);
+			ps.setString(3, enderecoFunc);
+			ps.setString(4, senhaFunc);
+			ps.setString(5, emailFunc);
+			ps.setString(6, foneFunc);
+			ps.setString(7, funcaoFunc);
+			ps.setInt(8, cpfFunc);
+			ps.executeUpdate();
+			ps.close();
+			banco.close();
+			modificou = true;
+
+		} catch (Exception e) {
+			throw new RuntimeException();
+		}
+		if (modificou != false) {
+			lblMensagem.setText(nomeFunc + " foi alterado(a).");
+		} else {
+			lblMensagem.setText(nomeFunc + " Não foi alterado(a).");
+		}
 	}
 
 	public void onBtnConfirmarClick() {
 		if (evento.equalsIgnoreCase("incluir")) {
-			incluir();
-			onBtnCancelarClick();
+			if (!txtCpfFunc.getText().matches("[0-9]*")) {
+				lblMensagem.setText("Digite um CPF valido.");
+
+			} else {
+				incluir();
+				onBtnCancelarClick();
+			}
 
 		} else if (evento.equalsIgnoreCase("consultar")) {
-			
 			if (!txtCpfFunc.getText().matches("[0-9]*")) {
-				System.out.println("Digite um CPF valido.");
+				lblMensagem.setText("Digite um CPF valido.");
+
 			} else {
 				txtCpfFunc.setDisable(true);
 				btnExcluir.setDisable(false);
 				btnAlterar.setDisable(false);
 				btnConfirmar.setDisable(true);
-
 				consultar();
 			}
 
 		} else if (evento.equalsIgnoreCase("alterar")) {
 			alterar();
+			onBtnCancelarClick();
+
+		} else {
+			excluir();
 			onBtnCancelarClick();
 		}
 	}
@@ -249,11 +332,9 @@ public class FuncionarioController implements Initializable {
 
 		btnConfirmar.setDisable(true);
 		btnCancelar.setDisable(true);
-
 	}
 
 	public void onBtnVoltar() throws Exception {
-		System.out.println("Voltando para indexPage");
 		Parent p = FXMLLoader.load(getClass().getResource("/interfacegrafica/Index.fxml"));
 		Stage window = (Stage) btnVoltar.getScene().getWindow();
 		window.setScene(new Scene(p));
@@ -268,10 +349,10 @@ public class FuncionarioController implements Initializable {
 					| txtSenhaFunc.getText().isEmpty() | txtEmailFunc.getText().isEmpty()
 					| txtFoneFunc.getText().isEmpty();
 			btnConfirmar.setDisable(confirmar);
+
 		} else if (evento.equalsIgnoreCase("consultar")) {
 			confirmar = txtCpfFunc.getText().isEmpty();
 			btnConfirmar.setDisable(confirmar);
-		} else if (evento.equalsIgnoreCase("alterar")) {
 		}
 	}
 
@@ -279,5 +360,4 @@ public class FuncionarioController implements Initializable {
 	public void initialize(URL locatioin, ResourceBundle resource) {
 		cboFuncaoFunc.getItems().addAll("Auxiliar", "Marketing", "Médico", "Produção", "Recepcionista", "RH", "Vendas");
 	}
-
 }
